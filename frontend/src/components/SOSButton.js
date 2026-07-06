@@ -9,20 +9,19 @@ function SOSButton() {
     try {
       setLoading(true);
 
-      const user = JSON.parse(localStorage.getItem("user"));
-
-      const data = {
-        userName: user?.name || "Unknown User",
+      // Backend gets user details from JWT
+      await API.post("/emergency", {
         type,
-        status: "active",
-      };
-
-      await API.post("/emergency", data);
+      });
 
       alert("🚨 Emergency reported successfully!");
+
     } catch (err) {
       console.log(err);
-      alert("Failed to send emergency.");
+      alert(
+        err.response?.data?.message ||
+        "Failed to send emergency."
+      );
     } finally {
       setLoading(false);
     }

@@ -50,13 +50,11 @@ function EmergencyList() {
     }
   };
 
-  const toggleStatus = async (id, status) => {
+  // Resolve only
+  const toggleStatus = async (id) => {
     try {
-      const newStatus =
-        status === "active" ? "resolved" : "active";
-
       await API.put(`/emergency/${id}`, {
-        status: newStatus,
+        status: "resolved",
       });
     } catch (err) {
       console.log(err);
@@ -128,9 +126,7 @@ function EmergencyList() {
 
         <div className="text-center py-16">
 
-          <div className="text-6xl">
-            📭
-          </div>
+          <div className="text-6xl">📭</div>
 
           <h3 className="text-2xl font-bold mt-4">
             No Emergencies Found
@@ -162,7 +158,7 @@ function EmergencyList() {
                 <div className="flex flex-wrap gap-3 mt-3">
 
                   <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold">
-                    🚑 {e.type || "General"}
+                    🚑 {e.type}
                   </span>
 
                   <span
@@ -185,21 +181,24 @@ function EmergencyList() {
 
               <div className="flex gap-3 mt-5 md:mt-0">
 
-                <button
-                  onClick={() =>
-                    toggleStatus(e._id, e.status)
-                  }
-                  className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg transition"
-                >
-                  {e.status === "active"
-                    ? "✔ Resolve"
-                    : "🔄 Reopen"}
-                </button>
+                {e.status === "active" ? (
+                  <button
+                    onClick={() => toggleStatus(e._id)}
+                    className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg transition"
+                  >
+                    ✔ Resolve
+                  </button>
+                ) : (
+                  <button
+                    disabled
+                    className="bg-gray-400 text-white px-5 py-2 rounded-lg cursor-not-allowed"
+                  >
+                    ✅ Resolved
+                  </button>
+                )}
 
                 <button
-                  onClick={() =>
-                    deleteEmergency(e._id)
-                  }
+                  onClick={() => deleteEmergency(e._id)}
                   className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition"
                 >
                   🗑 Delete
